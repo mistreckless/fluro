@@ -180,13 +180,13 @@ class FluroRouter {
 
     final parameters = match?.parameters ?? <String, List<String>>{};
 
+    final page = await Future.microtask(
+        () => handler.handlerFunc(buildContext, parameters));
+
     if (handler.type == HandlerType.function) {
-      handler.handlerFunc(buildContext, parameters);
       return RouteMatch(matchType: RouteMatchType.nonVisual);
     }
 
-    final page = await Future.microtask(
-        () => handler.handlerFunc(buildContext, parameters));
     RouteCreator creator = (
       RouteSettings? routeSettings,
       Map<String, List<String>> parameters,
