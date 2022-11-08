@@ -75,8 +75,8 @@ class FluroRouter {
     RouteTransitionsBuilder? transitionBuilder,
     RouteSettings? routeSettings,
     bool? opaque,
-  }) {
-    RouteMatch routeMatch = matchRoute(
+  }) async {
+    RouteMatch routeMatch = await matchRoute(
       context,
       path,
       transitionType: transition,
@@ -141,7 +141,7 @@ class FluroRouter {
   }
 
   /// Attempt to match a route to the provided [path].
-  RouteMatch matchRoute(
+  Future<RouteMatch> matchRoute(
     BuildContext? buildContext,
     String? path, {
     RouteSettings? routeSettings,
@@ -150,7 +150,7 @@ class FluroRouter {
     RouteTransitionsBuilder? transitionsBuilder,
     bool maintainState = true,
     bool? opaque,
-  }) {
+  }) async {
     RouteSettings settingsToUse = routeSettings ?? RouteSettings(name: path);
 
     if (settingsToUse.name == null) {
@@ -185,6 +185,8 @@ class FluroRouter {
       return RouteMatch(matchType: RouteMatchType.nonVisual);
     }
 
+    final page = await Future.microtask(
+        () => handler.handlerFunc(buildContext, parameters));
     RouteCreator creator = (
       RouteSettings? routeSettings,
       Map<String, List<String>> parameters,
@@ -198,8 +200,7 @@ class FluroRouter {
           fullscreenDialog: transition == TransitionType.nativeModal,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return handler.handlerFunc(context, parameters) ??
-                SizedBox.shrink();
+            return page ?? SizedBox.shrink();
           },
         );
       } else if (transition == TransitionType.material ||
@@ -210,8 +211,7 @@ class FluroRouter {
               transition == TransitionType.materialFullScreenDialog,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return handler.handlerFunc(context, parameters) ??
-                SizedBox.shrink();
+            return page ?? SizedBox.shrink();
           },
         );
       } else if (transition == TransitionType.cupertino ||
@@ -222,8 +222,7 @@ class FluroRouter {
               transition == TransitionType.cupertinoFullScreenDialog,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return handler.handlerFunc(context, parameters) ??
-                SizedBox.shrink();
+            return page ?? SizedBox.shrink();
           },
         );
       } else {
@@ -242,8 +241,7 @@ class FluroRouter {
           maintainState: maintainState,
           pageBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation) {
-            return handler.handlerFunc(context, parameters) ??
-                SizedBox.shrink();
+            return page ?? SizedBox.shrink();
           },
           transitionDuration: transition == TransitionType.none
               ? Duration.zero
@@ -314,8 +312,8 @@ class FluroRouter {
   /// Route generation method. This function can be used as a way to create routes on-the-fly
   /// if any defined handler is found. It can also be used with the [MaterialApp.onGenerateRoute]
   /// property as callback to create routes that can be used with the [Navigator] class.
-  Route<dynamic>? generator(RouteSettings routeSettings) {
-    RouteMatch match = matchRoute(
+  Future<Route<dynamic>?> generator(RouteSettings routeSettings) async {
+    RouteMatch match = await matchRoute(
       null,
       routeSettings.name,
       routeSettings: routeSettings,
