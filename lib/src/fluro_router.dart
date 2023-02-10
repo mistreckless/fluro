@@ -181,9 +181,6 @@ class FluroRouter {
 
     final parameters = match?.parameters ?? <String, List<String>>{};
 
-    final page = await Future.microtask(
-        () => handler.handlerFunc(buildContext, parameters));
-
     if (handler.type == HandlerType.function) {
       return RouteMatch(matchType: RouteMatchType.nonVisual);
     }
@@ -201,7 +198,17 @@ class FluroRouter {
           fullscreenDialog: transition == TransitionType.nativeModal,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return page ?? SizedBox.shrink();
+            return FutureBuilder<Widget>(
+              future: Future.microtask(() =>
+                  handler.handlerFunc(buildContext, parameters) ??
+                  SizedBox.shrink()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return SizedBox.shrink();
+              },
+            );
           },
         );
       } else if (transition == TransitionType.material ||
@@ -212,7 +219,17 @@ class FluroRouter {
               transition == TransitionType.materialFullScreenDialog,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return page ?? SizedBox.shrink();
+            return FutureBuilder<Widget>(
+              future: Future.microtask(() =>
+                  handler.handlerFunc(buildContext, parameters) ??
+                  SizedBox.shrink()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return SizedBox.shrink();
+              },
+            );
           },
         );
       } else if (transition == TransitionType.cupertino ||
@@ -223,7 +240,16 @@ class FluroRouter {
               transition == TransitionType.cupertinoFullScreenDialog,
           maintainState: maintainState,
           builder: (BuildContext context) {
-            return page ?? SizedBox.shrink();
+            return FutureBuilder<Widget>(
+              future: Future.microtask(
+                      () => handler.handlerFunc(buildContext, parameters) ?? SizedBox.shrink()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return SizedBox.shrink();
+              },
+            );
           },
         );
       } else {
@@ -242,7 +268,16 @@ class FluroRouter {
           maintainState: maintainState,
           pageBuilder: (BuildContext context, Animation<double> animation,
               Animation<double> secondaryAnimation) {
-            return page ?? SizedBox.shrink();
+            return FutureBuilder<Widget>(
+              future: Future.microtask(
+                      () => handler.handlerFunc(buildContext, parameters) ?? SizedBox.shrink()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return SizedBox.shrink();
+              },
+            );
           },
           transitionDuration: transition == TransitionType.none
               ? Duration.zero
