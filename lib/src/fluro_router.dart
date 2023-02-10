@@ -200,7 +200,7 @@ class FluroRouter {
           builder: (BuildContext context) {
             return FutureBuilder<Widget>(
               future: Future.microtask(() =>
-                  handler.handlerFunc(buildContext, parameters) ??
+                  handler.handlerFunc(context, parameters) ??
                   SizedBox.shrink()),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -221,7 +221,7 @@ class FluroRouter {
           builder: (BuildContext context) {
             return FutureBuilder<Widget>(
               future: Future.microtask(() =>
-                  handler.handlerFunc(buildContext, parameters) ??
+                  handler.handlerFunc(context, parameters) ??
                   SizedBox.shrink()),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -242,7 +242,7 @@ class FluroRouter {
           builder: (BuildContext context) {
             return FutureBuilder<Widget>(
               future: Future.microtask(
-                      () => handler.handlerFunc(buildContext, parameters) ?? SizedBox.shrink()),
+                      () => handler.handlerFunc(context, parameters) ?? SizedBox.shrink()),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return snapshot.data!;
@@ -270,7 +270,7 @@ class FluroRouter {
               Animation<double> secondaryAnimation) {
             return FutureBuilder<Widget>(
               future: Future.microtask(
-                      () => handler.handlerFunc(buildContext, parameters) ?? SizedBox.shrink()),
+                      () => handler.handlerFunc(context, parameters) ?? SizedBox.shrink()),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return snapshot.data!;
