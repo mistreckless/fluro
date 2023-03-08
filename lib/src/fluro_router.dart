@@ -182,6 +182,7 @@ class FluroRouter {
     final parameters = match?.parameters ?? <String, List<String>>{};
 
     if (handler.type == HandlerType.function) {
+      handler.handlerFunc(buildContext, parameters)
       return RouteMatch(matchType: RouteMatchType.nonVisual);
     }
 
