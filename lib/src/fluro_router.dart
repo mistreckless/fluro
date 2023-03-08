@@ -76,7 +76,7 @@ class FluroRouter {
     RouteSettings? routeSettings,
     bool? opaque,
   }) async {
-    RouteMatch routeMatch = await matchRoute(
+    RouteMatch routeMatch = matchRoute(
       context,
       path,
       transitionType: transition,
@@ -141,7 +141,7 @@ class FluroRouter {
   }
 
   /// Attempt to match a route to the provided [path].
-  Future<RouteMatch> matchRoute(
+  RouteMatch matchRoute(
     BuildContext? buildContext,
     String? path, {
     RouteSettings? routeSettings,
@@ -150,7 +150,7 @@ class FluroRouter {
     RouteTransitionsBuilder? transitionsBuilder,
     bool maintainState = true,
     bool? opaque,
-  }) async {
+  }) {
     RouteSettings settingsToUse = routeSettings ?? RouteSettings(name: path);
 
     if (settingsToUse.name == null) {
@@ -348,8 +348,8 @@ class FluroRouter {
   /// Route generation method. This function can be used as a way to create routes on-the-fly
   /// if any defined handler is found. It can also be used with the [MaterialApp.onGenerateRoute]
   /// property as callback to create routes that can be used with the [Navigator] class.
-  Future<Route<dynamic>?> generator(RouteSettings routeSettings) async {
-    RouteMatch match = await matchRoute(
+  Route<dynamic>? generator(RouteSettings routeSettings) {
+    RouteMatch match = matchRoute(
       null,
       routeSettings.name,
       routeSettings: routeSettings,
